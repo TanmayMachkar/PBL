@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import ParticlesBg from 'particles-bg';
+import {sha256} from 'hash-wasm';
 import './App.css';
 import Main from './components/Main/Main';
 import Hash from './components/Hash/Hash';
@@ -9,24 +10,12 @@ class App extends Component{
   {
     super();
     this.state = {
-      route: '',
-      input: '',
-      hashData: ''
+      route: ''
     }
-  }
-
-  onInputChange = (event) => {
-    this.setState({input: event.target.value});
   }
 
   onRouteChange = (route) => {
     this.setState({route: route})
-  }
-
-  onButtonSubmit = () => {
-    this.setState({hashData: this.state.input}, () => {
-      console.log(this.state.hashData)
-    })
   }
 
   render()
@@ -40,7 +29,7 @@ class App extends Component{
         route === 'hash'
           ? 
           <div>
-            <Hash onInputChange = {this.onInputChange} onButtonSubmit = {this.onButtonSubmit}/>
+            <Hash/>
           </div>
           : (
             route === 'block'
