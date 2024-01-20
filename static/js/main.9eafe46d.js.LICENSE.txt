@@ -1,4 +1,10 @@
 /*!
+ * hash-wasm (https://www.npmjs.com/package/hash-wasm)
+ * (c) Dani Biro
+ * @license MIT
+ */
+
+/*!
 * Proton v4.2.1
 * https://github.com/drawcall/Proton
 *
