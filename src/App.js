@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
 import ParticlesBg from 'particles-bg';
-import {sha256} from 'hash-wasm';
 import './App.css';
 import Main from './components/Main/Main';
 import Hash from './components/Hash/Hash';
+import Block from './components/Block/Block';
 
 class App extends Component{
   constructor()
@@ -33,6 +33,11 @@ class App extends Component{
           </div>
           : (
             route === 'block'
+            ?
+            <Block/>
+            : (
+              route === 'blockchain'
+            )
           )
       }
     </div>

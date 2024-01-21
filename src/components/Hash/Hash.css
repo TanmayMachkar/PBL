@@ -34,4 +34,5 @@ output{
   display: flex;
   overflow: scroll;
   -webkit-overflow-scrolling: auto;
+  height: 50px;
 }
