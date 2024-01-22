@@ -43,16 +43,17 @@ const Blockchain = () => {
     const nonce = mineBlock(data);
     setNonceResult(nonce);
     handleHash();
+    handlePrevHash();
     setIsMined(true);
   };
 
   const calculatePrevHash = (data, nonce) => {
-    const input = data + nonce + prevHashResult;
+    const input = data + nonce;
     return crypto.SHA256(input).toString();
   };
 
   const handlePrevHash = async () => {
-    const inputData = nextHashData;
+    const inputData = nextHashData + hashData + prevHashResult;
     const result = await sha256(inputData);
     setNextHashResult(result);
   };
@@ -80,7 +81,7 @@ const Blockchain = () => {
 
   useEffect(() => {
     handlePrevHash(); 
-  }, [nextHashData]);
+  }, [nextHashData + hashData]);
 
   useEffect(() => {
     handleHash(); 
