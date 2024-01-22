@@ -4,6 +4,7 @@ import './App.css';
 import Main from './components/Main/Main';
 import Hash from './components/Hash/Hash';
 import Block from './components/Block/Block';
+import Blockchain from './components/Blockchain/Blockchain';
 
 class App extends Component{
   constructor()
@@ -37,6 +38,11 @@ class App extends Component{
             <Block/>
             : (
               route === 'blockchain'
+              ?
+              <Blockchain/>
+              : (
+                route == 'distributed'
+              )
             )
           )
       }

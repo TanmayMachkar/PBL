@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { sha256 } from 'hash-wasm';
 import crypto from 'crypto-js';
 
@@ -6,7 +6,7 @@ const Block = () => {
   const [hashData, setHashData] = useState('');
   const [hashResult, setHashResult] = useState('');
   const [nonceResult, setNonceResult] = useState('');
-  const [isMined, setIsMined] = useState(false);
+  const [isMined, setIsMined] = useState(true);
 
   const mineBlock = (data) => {
     let nonce = 0;
@@ -39,6 +39,10 @@ const Block = () => {
     handleHash();
     setIsMined(true);
   };
+
+  useEffect(() => {
+    handleHash(); 
+  }, [hashData]);
 
   return (
     <div className={`pa3 ba ma3 ${isMined ? 'bg-light-green' : 'bg-light-red'}`}>

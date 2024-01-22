@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { sha256 } from 'hash-wasm';
 import './Hash.css';
 
@@ -12,6 +12,10 @@ const Hash = ({ onInputChange, onButtonSubmit }) => {
     setHashResult(result);
   };
 
+  useEffect(() => {
+    handleHash();
+  }, [hashData]);
+
   return (
     <div className="mt3 ml3 mr3 tc ba pa3 bg-light-green">
       <h5>DATA</h5>
@@ -19,11 +23,6 @@ const Hash = ({ onInputChange, onButtonSubmit }) => {
         className="pa2 input-reset ba bg-white hover-bg-black hover-white w-50 h-100 mr3"
         onChange={(event) => setHashData(event.target.value)}
       />
-      <button 
-      	className="button-1" 
-      	role="button" 
-      	onClick={handleHash}
-      >Enter Data</button>
       <h5>SHA256</h5>
       <output className="center pa1 w-50 bg-white ba break">{hashResult}</output>
     </div>
