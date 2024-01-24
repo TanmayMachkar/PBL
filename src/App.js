@@ -42,7 +42,7 @@ class App extends Component{
                 ?
                 <Blockchain/>
                 : (
-                  route == 'distributed'
+                  route === 'distributed'
                   ?
                   <Distributed/>
                   : (
