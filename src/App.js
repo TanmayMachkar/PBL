@@ -5,6 +5,7 @@ import Main from './components/Main/Main';
 import Hash from './components/Hash/Hash';
 import Block from './components/Block/Block';
 import Blockchain from './components/Blockchain/Blockchain';
+import Distributed from './components/Distributed/Distributed';
 
 class App extends Component{
   constructor()
@@ -23,31 +24,36 @@ class App extends Component{
   {
     const {route} = this.state;
     return (
-    <div>
-      <ParticlesBg type="circle" bg={true}/>
-      <Main onRouteChange = {this.onRouteChange}/>
-      {
-        route === 'hash'
-          ? 
-          <div>
-            <Hash/>
-          </div>
-          : (
-            route === 'block'
-            ?
-            <Block/>
+      <div>
+        <ParticlesBg type="circle" bg={true}/>
+        <Main onRouteChange = {this.onRouteChange}/>
+        {
+          route === 'hash'
+            ? 
+            <div>
+              <Hash/>
+            </div>
             : (
-              route === 'blockchain'
+              route === 'block'
               ?
-              <Blockchain/>
+              <Block/>
               : (
-                route == 'distributed'
+                route === 'blockchain'
+                ?
+                <Blockchain/>
+                : (
+                  route == 'distributed'
+                  ?
+                  <Distributed/>
+                  : (
+                    route === 'tokens'
+                  )
+                )
               )
             )
-          )
-      }
-    </div>
-  );
+        }
+      </div>
+    );
   }
 }
 

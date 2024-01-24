@@ -167,7 +167,7 @@ const Blockchain = () => {
 	        <h5>Current SHA256 Hash</h5>
 	        <output className="center pa1 w-50 bg-white ba break">{hashResult}</output>
 	        <button
-            className="button-1"
+            className="button-1 mt2"
             role="button"
             onClick={mine}
           >MINE
@@ -204,7 +204,7 @@ const Blockchain = () => {
 	        <h5>Current SHA256 Hash</h5>
 	        <output className="center pa1 w-50 bg-white ba break">{nextHashResult}</output>
 	        <button
-            className="button-1"
+            className="button-1 mt2"
             role="button"
             onClick={mineNext}
           >MINE
@@ -239,7 +239,7 @@ const Blockchain = () => {
 	        <h5>Current SHA256 Hash</h5>
 	        <output className="center pa1 w-50 bg-white ba break">{thirdHashResult}</output>
 	        <button
-            className="button-1"
+            className="button-1 mt2"
             role="button"
             onClick={mineThird}
           >MINE
