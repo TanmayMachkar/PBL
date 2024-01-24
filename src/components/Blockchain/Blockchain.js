@@ -8,10 +8,18 @@ const Blockchain = () => {
   const [hashResult, setHashResult] = useState('');
   const [nonceResult, setNonceResult] = useState('');
   const [isMined, setIsMined] = useState(true);
+  
   const [nextHashData, setNextHashData] = useState('');
   const [prevHashResult, prevSetHashResult] = useState('');
   const [nextHashResult, setNextHashResult] = useState('');
   const [nextNonceResult, setNextNonceResult] = useState('');
+  const [isNextMined, setIsNextMined] = useState(true);
+
+  const [thirdHashData, setThirdHashData] = useState('');
+  const [prevSecondHashResult, prevSecondSetHashResult] = useState('');
+  const [thirdHashResult, setThirdHashResult] = useState('');
+  const [thirdNonceResult, setThirdNonceResult] = useState('');
+  const [isThirdMined, setIsThirdMined] = useState(true);
 
   const mineBlock = (data) => {
     let nonce = 0;
@@ -56,6 +64,7 @@ const Blockchain = () => {
     const inputData = nextHashData + hashData + prevHashResult;
     const result = await sha256(inputData);
     setNextHashResult(result);
+    prevSecondSetHashResult(result);
   };
 
   const mineNextBlock = (data) => {
@@ -76,8 +85,44 @@ const Blockchain = () => {
     const nonce = mineNextBlock(data);
     setNextNonceResult(nonce);
     handlePrevHash();
-    setIsMined(true);
+    setIsNextMined(true);
   };
+
+  const calculateThirdHash = (data, nonce) => {
+    const input = data + nonce;
+    return crypto.SHA256(input).toString();
+  };
+
+  const handleThirdHash = async () => {
+    const inputData = hashData + nextHashData + thirdHashData + prevSecondHashResult;
+    const result = await sha256(inputData);
+    setThirdHashResult(result);
+  };
+
+  const mineThirdBlock = (data) => {
+    let nonce = 0;
+    const targetPrefix = '0000';
+
+    while (true) {
+      const hash = calculateThirdHash(data, nonce);
+      if (hash.startsWith(targetPrefix)) {
+        return nonce;
+      }
+      nonce++;
+    }
+  };
+
+  const mineThird = () => {
+    const data = thirdHashData;
+    const nonce = mineThirdBlock(data);
+    setThirdNonceResult(nonce);
+    handleThirdHash();
+    setIsThirdMined(true);
+  };
+
+  useEffect(() => {
+    handleThirdHash(); 
+  }, [nextHashData + hashData + thirdHashData]);
 
   useEffect(() => {
     handlePrevHash(); 
@@ -88,7 +133,8 @@ const Blockchain = () => {
   }, [hashData]);
 
   return (
-  	<div className = 'tc'>
+  	<div className = 'tc scrollmenu'>
+  		<p>
 	    <div className={`pa3 ba ma3 ${isMined ? 'bg-light-green' : 'bg-light-red'}`}>
 	      <div className="tc box">
 	        <h5>DATA</h5>
@@ -97,6 +143,8 @@ const Blockchain = () => {
 	          onChange={(event) => {
 	            setHashData(event.target.value);
 	            setIsMined(false);
+	            setIsNextMined(false);
+	            setIsThirdMined(false);
 	          }}
 	        />
 	        <button
@@ -113,15 +161,18 @@ const Blockchain = () => {
 	        <output className="center pa1 w-50 bg-white ba break">{hashResult}</output>
 	      </div>
 	    </div>
+	    </p>
 
-	    <div className={`pa3 ba ma3 ${isMined ? 'bg-light-green' : 'bg-light-red'}`}>
+	    <p>
+	    <div className={`pa3 ba ma3 ${isNextMined ? 'bg-light-green' : 'bg-light-red'}`}>
 	      <div className="tc box">
 	        <h5>DATA</h5>
 	        <input
 	          className="pa2 input-reset ba bg-white hover-bg-black hover-white w-50 h-100 mr3"
 	          onChange={(event) => {
 	            setNextHashData(event.target.value);
-	            setIsMined(false);
+	            setIsNextMined(false);
+	            setIsThirdMined(false);
 	          }}
 	        />
 	        <button
@@ -138,6 +189,34 @@ const Blockchain = () => {
 	        <output className="center pa1 w-50 bg-white ba break">{nextHashResult}</output>
 	      </div>
     	</div>
+    	</p>
+
+    	<p>
+	    <div className={`pa3 ba ma3 ${isThirdMined ? 'bg-light-green' : 'bg-light-red'}`}>
+	      <div className="tc box">
+	        <h5>DATA</h5>
+	        <input
+	          className="pa2 input-reset ba bg-white hover-bg-black hover-white w-50 h-100 mr3"
+	          onChange={(event) => {
+	            setThirdHashData(event.target.value);
+	            setIsThirdMined(false);
+	          }}
+	        />
+	        <button
+	          className="button-1"
+	          role="button"
+	          onClick={mineThird}
+	        >MINE
+	        </button>
+	        <h5>NONCE</h5>
+	        <output className="center pa1 w-50 bg-white ba break">{thirdNonceResult}</output>
+	        <h5>PREVIOUS HASH</h5>
+	        <output className="center pa1 w-50 bg-white ba break">{prevSecondHashResult}</output>
+	        <h5>Current SHA256 Hash</h5>
+	        <output className="center pa1 w-50 bg-white ba break">{thirdHashResult}</output>
+	      </div>
+    	</div>
+    	</p>
     </div>
   );
 };

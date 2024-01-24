@@ -1,4 +1,11 @@
-.box{
-  overflow-x: scroll;
-  -webkit-overflow-scrolling: auto;
+div.scrollmenu {
+  overflow: auto;
+  white-space: nowrap;
+}
+
+div.scrollmenu p {
+  display: inline-block;
+  text-align: center;
+  padding: 14px;
+  text-decoration: none;
 }
