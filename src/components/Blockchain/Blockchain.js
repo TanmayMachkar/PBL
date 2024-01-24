@@ -8,18 +8,21 @@ const Blockchain = () => {
   const [hashResult, setHashResult] = useState('');
   const [nonceResult, setNonceResult] = useState('');
   const [isMined, setIsMined] = useState(true);
-  
+  const [nonceOg, setNonceOg] = useState(0);
+
   const [nextHashData, setNextHashData] = useState('');
   const [prevHashResult, prevSetHashResult] = useState('');
   const [nextHashResult, setNextHashResult] = useState('');
   const [nextNonceResult, setNextNonceResult] = useState('');
   const [isNextMined, setIsNextMined] = useState(true);
+  const [nonceOg2, setNonceOg2] = useState(0);
 
   const [thirdHashData, setThirdHashData] = useState('');
   const [prevSecondHashResult, prevSecondSetHashResult] = useState('');
   const [thirdHashResult, setThirdHashResult] = useState('');
   const [thirdNonceResult, setThirdNonceResult] = useState('');
   const [isThirdMined, setIsThirdMined] = useState(true);
+  const [nonceOg3, setNonceOg3] = useState(0);
 
   const mineBlock = (data) => {
     let nonce = 0;
@@ -28,21 +31,18 @@ const Blockchain = () => {
     while (true) {
       const hash = calculateHash(data, nonce);
       if (hash.startsWith(targetPrefix)) {
+        setHashResult(hash);
+        prevSetHashResult(hash);
         return nonce;
       }
       nonce++;
     }
   };
 
-  const handleHash = async () => {
-    const inputData = hashData;
-    const result = await sha256(inputData);
-    setHashResult(result);
-    prevSetHashResult(result);
-  };
-
   const calculateHash = (data, nonce) => {
-    const input = data + nonce;
+    const input = data + nonce + nonceOg;
+    const result = crypto.SHA256(input).toString();
+    setHashResult(result);
     return crypto.SHA256(input).toString();
   };
 
@@ -50,21 +50,12 @@ const Blockchain = () => {
     const data = hashData;
     const nonce = mineBlock(data);
     setNonceResult(nonce);
-    handleHash();
-    handlePrevHash();
     setIsMined(true);
   };
 
   const calculatePrevHash = (data, nonce) => {
-    const input = data + nonce;
+    const input = data + nonce + nonceOg2;
     return crypto.SHA256(input).toString();
-  };
-
-  const handlePrevHash = async () => {
-    const inputData = nextHashData + hashData + prevHashResult;
-    const result = await sha256(inputData);
-    setNextHashResult(result);
-    prevSecondSetHashResult(result);
   };
 
   const mineNextBlock = (data) => {
@@ -74,6 +65,8 @@ const Blockchain = () => {
     while (true) {
       const hash = calculatePrevHash(data, nonce);
       if (hash.startsWith(targetPrefix)) {
+        setNextHashResult(hash);
+        prevSecondSetHashResult(hash);
         return nonce;
       }
       nonce++;
@@ -84,19 +77,12 @@ const Blockchain = () => {
     const data = nextHashData;
     const nonce = mineNextBlock(data);
     setNextNonceResult(nonce);
-    handlePrevHash();
     setIsNextMined(true);
   };
 
   const calculateThirdHash = (data, nonce) => {
-    const input = data + nonce;
+    const input = data + nonce + nonceOg3;
     return crypto.SHA256(input).toString();
-  };
-
-  const handleThirdHash = async () => {
-    const inputData = hashData + nextHashData + thirdHashData + prevSecondHashResult;
-    const result = await sha256(inputData);
-    setThirdHashResult(result);
   };
 
   const mineThirdBlock = (data) => {
@@ -106,6 +92,7 @@ const Blockchain = () => {
     while (true) {
       const hash = calculateThirdHash(data, nonce);
       if (hash.startsWith(targetPrefix)) {
+        setThirdHashResult(hash);
         return nonce;
       }
       nonce++;
@@ -116,21 +103,37 @@ const Blockchain = () => {
     const data = thirdHashData;
     const nonce = mineThirdBlock(data);
     setThirdNonceResult(nonce);
-    handleThirdHash();
     setIsThirdMined(true);
   };
 
   useEffect(() => {
-    handleThirdHash(); 
-  }, [nextHashData + hashData + thirdHashData]);
+    const updatePrevSecondHash = async () => {
+      const inputData = thirdHashData + nextHashData + hashData + prevHashResult + prevSecondHashResult + nonceOg + nonceOg2 + nonceOg3;
+      const result = await sha256(inputData);
+      setThirdHashResult(result);
+    };
+    updatePrevSecondHash();
+  }, [hashData, nonceOg, nextHashData, nonceOg2, thirdHashData, nonceOg3]);
 
   useEffect(() => {
-    handlePrevHash(); 
-  }, [nextHashData + hashData]);
+    const updatePrevHash = async () => {
+      const inputData = nextHashData + hashData + prevHashResult + nonceOg + nonceOg2;
+      const result = await sha256(inputData);
+      setNextHashResult(result);
+      prevSecondSetHashResult(result);
+    };
+    updatePrevHash();
+  }, [hashData, nonceOg, nextHashData, nonceOg2]);
 
   useEffect(() => {
-    handleHash(); 
-  }, [hashData]);
+    const updateHash = async () => {
+      const inputData = hashData + nonceOg;
+      const result = await sha256(inputData);
+      setHashResult(result);
+      prevSetHashResult(result);
+    };
+    updateHash();
+  }, [hashData, nonceOg]);
 
   return (
   	<div className = 'tc scrollmenu'>
@@ -147,19 +150,29 @@ const Blockchain = () => {
 	            setIsThirdMined(false);
 	          }}
 	        />
-	        <button
-	          className="button-1"
-	          role="button"
-	          onClick={mine}
-	        >MINE
-	        </button>
-	        <h5>NONCE</h5>
+          <h5>NONCE</h5>
+          <input
+            className="pa2 input-reset ba bg-white hover-bg-black hover-white w-50 h-100 mr3"
+            onChange={(event) => {
+              setNonceOg(event.target.value);
+              setIsMined(false);
+              setIsNextMined(false);
+              setIsThirdMined(false);
+            }}
+          />
+	        <h5>RESULTANT NONCE</h5>
 	        <output className="center pa1 w-50 bg-white ba break">{nonceResult}</output>
 	        <h5>PREVIOUS HASH</h5>
 	        <output className="center pa1 w-50 bg-white ba break">0000000000000000000000000000000000000000000000000000000000000000</output>
 	        <h5>Current SHA256 Hash</h5>
 	        <output className="center pa1 w-50 bg-white ba break">{hashResult}</output>
-	      </div>
+	        <button
+            className="button-1"
+            role="button"
+            onClick={mine}
+          >MINE
+          </button>
+        </div>
 	    </div>
 	    </p>
 
@@ -175,19 +188,28 @@ const Blockchain = () => {
 	            setIsThirdMined(false);
 	          }}
 	        />
-	        <button
-	          className="button-1"
-	          role="button"
-	          onClick={mineNext}
-	        >MINE
-	        </button>
-	        <h5>NONCE</h5>
+          <h5>NONCE</h5>
+          <input
+            className="pa2 input-reset ba bg-white hover-bg-black hover-white w-50 h-100 mr3"
+            onChange={(event) => {
+              setNonceOg2(event.target.value);
+              setIsNextMined(false);
+              setIsThirdMined(false);
+            }}
+          />
+	        <h5>RESULTANT NONCE</h5>
 	        <output className="center pa1 w-50 bg-white ba break">{nextNonceResult}</output>
 	        <h5>PREVIOUS HASH</h5>
 	        <output className="center pa1 w-50 bg-white ba break">{prevHashResult}</output>
 	        <h5>Current SHA256 Hash</h5>
 	        <output className="center pa1 w-50 bg-white ba break">{nextHashResult}</output>
-	      </div>
+	        <button
+            className="button-1"
+            role="button"
+            onClick={mineNext}
+          >MINE
+          </button>
+        </div>
     	</div>
     	</p>
 
@@ -202,19 +224,27 @@ const Blockchain = () => {
 	            setIsThirdMined(false);
 	          }}
 	        />
-	        <button
-	          className="button-1"
-	          role="button"
-	          onClick={mineThird}
-	        >MINE
-	        </button>
-	        <h5>NONCE</h5>
+          <h5>NONCE</h5>
+          <input
+            className="pa2 input-reset ba bg-white hover-bg-black hover-white w-50 h-100 mr3"
+            onChange={(event) => {
+              setNonceOg3(event.target.value);
+              setIsThirdMined(false);
+            }}
+          />
+	        <h5>RESULTANT NONCE</h5>
 	        <output className="center pa1 w-50 bg-white ba break">{thirdNonceResult}</output>
 	        <h5>PREVIOUS HASH</h5>
 	        <output className="center pa1 w-50 bg-white ba break">{prevSecondHashResult}</output>
 	        <h5>Current SHA256 Hash</h5>
 	        <output className="center pa1 w-50 bg-white ba break">{thirdHashResult}</output>
-	      </div>
+	        <button
+            className="button-1"
+            role="button"
+            onClick={mineThird}
+          >MINE
+          </button>
+        </div>
     	</div>
     	</p>
     </div>
