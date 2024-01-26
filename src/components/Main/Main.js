@@ -7,7 +7,7 @@ const Main = ({onRouteChange}) =>{
 			<h3 className="tc shadow-2 pa3 ma2 bg-light-blue br3">BLOCKCHAIN DEMO</h3>
 			<div class="topnav">
 				<a href="#news"><h5>COINBASE</h5></a>
-				<a href="#news"><h5>TOKENS</h5></a>
+				<a href="#news" onClick = {() => onRouteChange('tokens')}><h5>TOKENS</h5></a>
 				<a href="#news" onClick = {() => onRouteChange('distributed')}><h5>DISTRIBUTED</h5></a>
 				<a href="#news" onClick = {() => onRouteChange('blockchain')}><h5>BLOCKCHAIN</h5></a>
 				<a href="#news" onClick = {() => onRouteChange('block')}><h5>BLOCK</h5></a>

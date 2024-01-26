@@ -6,6 +6,7 @@ import Hash from './components/Hash/Hash';
 import Block from './components/Block/Block';
 import Blockchain from './components/Blockchain/Blockchain';
 import Distributed from './components/Distributed/Distributed';
+import Tokens from './components/Tokens/Tokens';
 
 class App extends Component{
   constructor()
@@ -47,6 +48,11 @@ class App extends Component{
                   <Distributed/>
                   : (
                     route === 'tokens'
+                    ?
+                    <Tokens/>
+                    : (
+                      route === 'coinbase'
+                    )
                   )
                 )
               )

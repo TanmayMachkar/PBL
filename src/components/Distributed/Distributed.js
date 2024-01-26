@@ -4,7 +4,7 @@ import './Distributed.css';
 
 const Distributed = () => {
 	return(
-		<div className = ''>
+		<div>
 			<h2 className = 'ml2'>PEER 1</h2>
 			<Blockchain/>
 			<h2 className = 'ml2'>PEER 2</h2>
